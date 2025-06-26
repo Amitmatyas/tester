@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חנות Printful שלי</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=ILS"></script> 
+    <style>
+        /* =========================================== */
+        /* עיצוב CSS - שוחזר לעיצוב המקורי שלך */
+        /* =========================================== */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e6e6fa; /* Light purple-blue */
+            color: #333;
+            direction: rtl;
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #4682b4; /* SteelBlue */
+            color: #fff;
+            padding: 1.8rem 0;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 35px;
+            background-color: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2f4f4f; /* DarkSlateGray */
+            margin-bottom: 35px;
+            font-size: 2.5rem;
+            border-bottom: 3px solid #add8e6; /* LightBlue */
+            padding-bottom: 18px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        #cart-toggle-button {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 35px auto;
+            background-color: #6a5acd; /* SlateBlue */
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #cart-toggle-button:hover {
+            background-color: #483d8b; /* DarkSlateBlue */
+            transform: translateY(-2px);
+        }
+
+        /* אזור מוצרים */
+        #products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .product-item {
+            background-color: #f8f8ff; /* GhostWhite */
+            border: 1px solid #dcdcdc; /* Gainsboro */
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-item img {
+            max-width: 100%;
+            height: 250px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #add8e6;
+        }
+
+        .product-item h3 {
+            font-size: 1.8rem;
+            margin: 15px 0;
+            color: #4682b4; /* SteelBlue */
+        }
+
+        .product-item p {
+            font-size: 1.5rem;
+            color: #3cb371; /* MediumSeaGreen */
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .product-item button {
+            background-color: #3cb371; /* MediumSeaGreen */
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.15rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 15px;
+        }
+
+        .product-item button:hover {
+            background-color: #2e8b57; /* SeaGreen */
+            transform: translateY(-2px);
+        }
+
+        .product-item button.view-details {
+            background-color: #696969; /* DimGray */
+        }
+
+        .product-item button.view-details:hover {
+            background-color: #4f4f4f; /* DarkGray */
+        }
+
+        /* עגלת קניות */
+        #cart-container {
+            background-color: #f0f8ff; /* AliceBlue */
+            border: 1px solid #b0c4de; /* LightSteelBlue */
+            padding: 30px;
+            border-radius: 15px;
+            display: none;
+            margin-top: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #cart-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2f4f4f;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        #cart-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        #cart-items li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 0;
+            border-bottom: 1px dashed #dcdcdc;
+            font-size: 1.2rem;
+        }
+
+        #cart-items li:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-left: 20px;
+            border: 2px solid #add8e6;
+        }
+
+        .cart-item-name {
+            flex-grow: 1;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-item-quantity button {
+            background-color: #6a5acd; /* SlateBlue */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .cart-item-quantity button:hover {
+            background-color: #483d8b;
+        }
+
+        .cart-item-price {
+            font-weight: bold;
+            color: #3cb371;
+            margin-right: 25px;
+            min-width: 90px;
+            text-align: left;
+        }
+
+        .remove-from-cart {
+            background-color: #dc143c; /* Crimson */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-from-cart:hover {
+            background-color: #b22222; /* FireBrick */
+        }
+
+        #cart-total {
+            text-align: left;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 3px solid #add8e6;
+            color: #4682b4;
+        }
+
+        #checkout-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background-color: #ffa07a; /* LightSalmon */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #checkout-button:hover {
+            background-color: #fa8072; /* Salmon */
+            transform: translateY(-2px);
+        }
+
+        /* מודלים (חלונות קופצים) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background-color: #f8f8ff; /* GhostWhite */
+            margin: auto;
+            padding: 45px;
+            border: 2px solid #b0c4de;
+            width: 90%;
+            max-width: 650px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeInScale 0.4s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content h2, .modal-content h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2f4f4f;
+        }
+
+        .close-button {
+            color: #888;
+            float: left;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 18px;
+            right: 25px;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #555;
+            text-decoration: none;
+        }
+
+        /* מודל פרטי מוצר */
+        #product-modal .modal-content {
+            text-align: center;
+        }
+
+        #modal-product-image {
+            max-width: 90%;
+            height: auto;
+            max-height: 350px;
+            object-fit: contain;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            border: 3px solid #add8e6;
+        }
+
+        #modal-product-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #4682b4;
+        }
+
+        #modal-product-price {
+            font-size: 2rem;
+            color: #3cb371;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        #modal-product-description {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 35px;
+            line-height: 1.8;
+        }
+
+        #modal-add-to-cart {
+            background-color: #3cb371;
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #modal-add-to-cart:hover {
+            background-color: #2e8b57;
+            transform: translateY(-2px);
+        }
+
+        /* מודל קופה */
+        #checkout-modal .modal-content {
+            text-align: right;
+        }
+
+        #checkout-form label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2f4f4f;
+        }
+
+        #checkout-form input[type="text"],
+        #checkout-form input[type="email"],
+        #checkout-form input[type="tel"] {
+            width: calc(100% - 28px);
+            padding: 14px;
+            margin-bottom: 25px;
+            border: 2px solid #b0c4de;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #checkout-form input:focus {
+            border-color: #6a5acd;
+            box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.25);
+            outline: none;
+        }
+
+        #paypal-button-container {
+            margin-top: 35px;
+            text-align: center;
+        }
+
+        #redirect-message {
+            display: none;
+            margin-top: 35px;
+            padding: 25px;
+            background-color: #e0ffe0; /* Very light green */
+            color: #006400; /* DarkGreen */
+            border: 2px solid #90ee90; /* LightGreen */
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>חנות Printful שלי</h1>
+    </header>
+
+    <main class="container">
+        <h2>המוצרים שלנו</h2>
+        <button id="cart-toggle-button">הצג/הסתר עגלה</button>
+        <div id="products-container">
+        </div>
+
+        <div id="cart-container">
+            <h2>עגלת הקניות שלך</h2>
+            <ul id="cart-items">
+            </ul>
+            <div id="cart-total">סה"כ: 0.00 ₪</div>
+            <button id="checkout-button">לתשלום</button>
+        </div>
+    </main>
+
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-product-modal">&times;</span>
+            <img id="modal-product-image" src="" alt="Product Image">
+            <h3 id="modal-product-title"></h3>
+            <p id="modal-product-price"></p>
+            <p id="modal-product-description"></p>
+            <button id="modal-add-to-cart">הוסף לעגלה</button>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-cart-modal">&times;</span>
+            <h2>פרטי תשלום</h2>
+            <form id="checkout-form">
+                <label for="name">שם מלא:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">אימייל:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">טלפון:</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <label for="address">כתובת (רחוב, מספר בית):</label>
+                <input type="text" id="address" name="address" required>
+                
+                <label for="city">עיר:</label>
+                <input type="text" id="city" name="city" required>
+
+                <label for="zip">מיקוד:</label>
+                <input type="text" id="zip" name="zip" required>
+
+                <input type="hidden" id="state_code" name="state_code" value="HA"> <input type="hidden" id="country_code" name="country_code" value="IL"> <div id="paypal-button-container">
+                </div>
+            </form>
+            <div id="redirect-message" style="display: none;">
+                ההזמנה הושלמה בהצלחה! מועבר לדף הבית...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // לא נשתמש ב-API Key כאן ב-Frontend! הוא שמור ב-Netlify Functions.
+
+        // ===========================================
+        // הגדרות ומשתנים גלובליים
+        // ===========================================
+        let products = []; // יכיל את המוצרים שיאוחזרו מ-Printful
+        let cart = []; // עגלת הקניות
+        let total = 0; // סך הכל לעגלה
+
+        // אלמנטי DOM
+        const productsContainer = document.getElementById('products-container');
+        const cartItemsList = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const cartContainer = document.getElementById('cart-container');
+        const cartToggleButton = document.getElementById('cart-toggle-button');
+        const checkoutButton = document.getElementById('checkout-button');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const closeCartModalButton = document.getElementById('close-cart-modal');
+        const checkoutForm = document.getElementById('checkout-form');
+        const redirectMessage = document.getElementById('redirect-message');
+
+        // Modal for product details
+        const productModal = document.getElementById('product-modal');
+        const modalProductImage = document.getElementById('modal-product-image');
+        const modalProductTitle = document.getElementById('modal-product-title');
+        const modalProductPrice = document.getElementById('modal-product-price');
+        const modalProductDescription = document.getElementById('modal-product-description');
+        const closeProductModalBtn = document.getElementById('close-product-modal');
+        const modalAddToCartBtn = document.getElementById('modal-add-to-cart');
+        let currentModalProductId = null; // Store the ID of the product currently in the modal
+
+        // ===========================================
+        // פונקציות עזר ו-UI
+        // ===========================================
+
+        /**
+         * משיכת מוצרים באמצעות Netlify Function.
+         */
+        async function fetchProducts() {
+            try {
+                // קוראים לפונקציית Netlify שלנו, לא ישירות ל-Printful
+                const response = await fetch('/.netlify/functions/get-products', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error calling Netlify Function (get-products):', response.status, errorData);
+                    throw new Error(`HTTP error from Netlify Function! status: ${response.status} - ${errorData.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log("מוצרים שהתקבלו מ-Netlify Function:", data);
+
+                // מפה את נתוני Printful למבנה שנוח לנו ב-Frontend
+                products = data.result.map(p => ({
+                    id: `printful-${p.id}`, // יצירת ID ייחודי לאתר שלך, לדוגמה "printful-123"
+                    name: p.name,
+                    price: parseFloat(p.retail_price) || parseFloat(p.product.price) || 0, // השתמש במחיר קמעונאי אם קיים
+                    image: p.thumbnail_url || 'placeholder.jpg',
+                    description: p.product?.description || '', // נתון התיאור עשוי להיות מקונן
+                    printful_product_id: p.product_id, // ה-ID של המוצר ב-Printful
+                    printful_variants: p.variants.map(v => ({ // מפה את הווריאציות
+                        id: v.id, // ה-ID של הווריאציה ב-Printful
+                        name: v.name, // שם הווריאציה (לדוגמה: "S, Black")
+                        price: parseFloat(v.retail_price) || parseFloat(v.price) || 0, // מחיר הווריאציה
+                        variant_id: v.id // שמירת ה-ID של הווריאציה
+                    }))
+                }));
+                renderProducts();
+            } catch (error) {
+                console.error("שגיאה במשיכת מוצרים:", error);
+                alert("אירעה שגיאה במשיכת המוצרים. ודא שהפונקציות של Netlify פרוסות כהלכה.");
+            }
+        }
+
+        function renderProducts() {
+            productsContainer.innerHTML = '';
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('product-item');
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-price">${product.price.toFixed(2)} ₪</p>
+                    <button class="add-to-cart" data-id="${product.id}">הוסף לעגלה</button>
+                    <button class="view-details" data-id="${product.id}">פרטים נוספים</button>
+                `;
+                productsContainer.appendChild(productDiv);
+            });
+        }
+
+        function addToCart(productId, quantity = 1) {
+            const productToAdd = products.find(p => p.id === productId);
+            if (!productToAdd) return;
+
+            // עבור פשטות, נבחר את הווריאציה הראשונה של המוצר כברירת מחדל
+            const selectedPrintfulVariant = productToAdd.printful_variants && productToAdd.printful_variants.length > 0
+                ? productToAdd.printful_variants[0]
+                : { id: null, name: 'ברירת מחדל', price: productToAdd.price, variant_id: null };
+
+            const existingItemWithVariantIndex = cart.findIndex(item =>
+                item.id === productToAdd.id &&
+                item.printful_variant_id === selectedPrintfulVariant.variant_id
+            );
+
+            if (existingItemWithVariantIndex !== -1) {
+                cart[existingItemWithVariantIndex].quantity += quantity;
+            } else {
+                cart.push({
+                    id: productToAdd.id,
+                    name: productToAdd.name,
+                    price: productToAdd.price,
+                    quantity: quantity,
+                    image: productToAdd.image,
+                    printful_product_id: productToAdd.printful_product_id,
+                    printful_variant_id: selectedPrintfulVariant.variant_id,
+                    printful_variant_name: selectedPrintfulVariant.name,
+                    printful_variant_price: selectedPrintfulVariant.price
+                });
+            }
+            updateCartDisplay();
+            cartContainer.style.display = 'block';
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => String(item.id) !== String(productId));
+            updateCartDisplay();
+        }
+
+        function changeQuantity(productId, change) {
+            const itemToUpdate = cart.find(item => String(item.id) === String(productId));
+            if (itemToUpdate) {
+                itemToUpdate.quantity += change;
+                if (itemToUpdate.quantity < 1) {
+                    cart = cart.filter(item => String(item.id) !== String(productId));
+                }
+                updateCartDisplay();
+            }
+        }
+
+        function updateCartDisplay() {
+            cartItemsList.innerHTML = '';
+            total = 0;
+            if (cart.length === 0) {
+                cartContainer.style.display = 'none';
+            } else {
+                cart.forEach(item => {
+                    const itemPrice = item.printful_variant_price || item.price;
+                    const itemTotal = itemPrice * item.quantity;
+                    total += itemTotal;
+
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+                        <span class="cart-item-name">${item.name} ${item.printful_variant_name ? `(${item.printful_variant_name})` : ''}</span>
+                        <span class="cart-item-quantity">
+                            <button class="decrease-quantity" data-id="${item.id}">-</button>
+                            ${item.quantity}
+                            <button class="increase-quantity" data-id="${item.id}">+</button>
+                        </span>
+                        <span class="cart-item-price">${itemTotal.toFixed(2)} ₪</span>
+                        <button class="remove-from-cart" data-id="${item.id}">X</button>
+                    `;
+                    cartItemsList.appendChild(li);
+                });
+                cartTotalElement.textContent = `סה"כ: ${total.toFixed(2)} ₪`;
+                cartContainer.style.display = 'block';
+            }
+        }
+
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            modalProductImage.src = product.image;
+            modalProductImage.alt = product.name;
+            modalProductTitle.textContent = product.name;
+            modalProductPrice.textContent = `${product.price.toFixed(2)} ₪`;
+            modalProductDescription.textContent = product.description ? product.description : '';
+            productModal.style.display = 'flex';
+            currentModalProductId = product.id;
+        }
+
+        function closeProductModal() {
+            productModal.style.display = 'none';
+            currentModalProductId = null;
+        }
+
+        // ===========================================
+        // אינטגרציה עם PayPal ושליחת הזמנה ל-Printful (באמצעות Netlify Function)
+        // ===========================================
+
+        function renderPayPalButton() {
+            const container = document.getElementById('paypal-button-container');
+            if (!container) return;
+            container.innerHTML = ""; // Clear existing buttons
+
+            paypal.Buttons({
+                style: {
+                    color: 'blue',
+                    shape: 'pill',
+                    label: 'pay',
+                    height: 40
+                },
+                createOrder: function(data, actions) {
+                    if (cart.length === 0) {
+                        alert('העגלה ריקה, לא ניתן לבצע תשלום.');
+                        return actions.reject();
+                    }
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: total.toFixed(2),
+                                currency_code: 'ILS'
+                            },
+                            description: 'רכישה באתר'
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(async function(details) {
+                        try {
+                            const name = document.getElementById('name').value;
+                            const email = document.getElementById('email').value;
+                            const phone = document.getElementById('phone').value;
+                            const address = document.getElementById('address').value;
+                            const city = document.getElementById('city').value;
+                            const zip = document.getElementById('zip').value;
+                            const stateCode = document.getElementById('state_code').value; // Hidden field
+                            const countryCode = document.getElementById('country_code').value; // Hidden field
+
+
+                            // הכנת נתוני ההזמנה עבור Printful API
+                            const printfulOrderItems = cart.map(item => ({
+                                variant_id: item.printful_variant_id,
+                                quantity: item.quantity,
+                                // files: [{ type: 'MOCKUP', url: item.image }] // הוסף אם יש קבצי עיצוב לשלוח
+                            }));
+
+                            const orderPayload = {
+                                recipient: {
+                                    name: name,
+                                    email: email,
+                                    phone: phone,
+                                    address1: address,
+                                    city: city,
+                                    // state_code: stateCode, // נתון זה נדרש רק עבור מדינות מסוימות (לרוב ארה"ב/קנדה). עבור ישראל, ייתכן שאין צורך או שזה יגרום שגיאה אם לא מוגדר נכון.
+                                    zip: zip,
+                                    country_code: countryCode // קוד מדינה (ISO 3166-1 alpha-2)
+                                },
+                                items: printfulOrderItems,
+                                shipping_method: "STANDARD" // שיטות משלוח: STANDARD, EXPRESS, ECONOMY, FLATRATE. בדוק ב-Printful API documentation.
+                            };
+
+                            // שליחת ההזמנה ל-Printful API באמצעות Netlify Function
+                            const response = await fetch('/.netlify/functions/create-order', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(orderPayload)
+                            });
+
+                            if (!response.ok) {
+                                const errorData = await response.json();
+                                console.error('Error calling Netlify Function (create-order):', response.status, errorData);
+                                throw new Error(`Failed to create order via Netlify Function: ${errorData.message || response.statusText}`);
+                            }
+
+                            const printfulOrderResult = await response.json();
+                            console.log('Printful Order Created:', printfulOrderResult);
+
+                            alert(`תודה לך, ${name}! התשלום בוצע בהצלחה וההזמנה נשלחה לייצור ב-Printful.`);
+                            cart = []; // Clear cart
+                            updateCartDisplay();
+                            checkoutModal.style.display = 'none';
+                            checkoutForm.reset();
+                            redirectMessage.style.display = 'block'; // הצג את הודעת ההפניה
+                            setTimeout(() => {
+                                window.location.href = 'https://bmiller.co.il'; // הפניה לאחר 3 שניות
+                            }, 3000);
+
+                        } catch (error) {
+                            console.error("שגיאה בתהליך התשלום או יצירת הזמנה ב-Printful:", error);
+                            alert("אירעה שגיאה בתהליך התשלום או יצירת ההזמנה. נסה שוב. (ייתכן שפונקציית Netlify נכשלה).");
+                        }
+                    });
+                },
+                onCancel: function(data) {
+                    alert('התשלום בוטל.');
+                },
+                onError: function(err) {
+                    console.error('שגיאה כללית בתשלום PayPal:', err);
+                    alert('שגיאה בתשלום: נסה שוב.');
+                }
+            }).render('#paypal-button-container');
+        }
+
+        // ===========================================
+        // אירועים
+        // ===========================================
+
+        productsContainer.addEventListener('click', (event) => {
+            if (event.target.classList.contains('add-to-cart')) {
+                addToCart(event.target.dataset.id);
+            }
+            if (event.target.classList.contains('view-details')) {
+                openProductModal(event.target.dataset.id);
+            }
+        });
+
+        cartItemsList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('increase-quantity') || event.target.classList.contains('decrease-quantity')) {
+                changeQuantity(event.target.dataset.id, event.target.classList.contains('increase-quantity') ? 1 : -1);
+            }
+            if (event.target.classList.contains('remove-from-cart')) {
+                removeFromCart(event.target.dataset.id);
+            }
+        });
+
+        checkoutButton.addEventListener('click', () => {
+            if (cart.length > 0) {
+                checkoutModal.style.display = 'flex';
+                renderPayPalButton();
+            } else {
+                alert('העגלה ריקה, לא ניתן לבצע תשלום.');
+            }
+        });
+
+        closeCartModalButton.addEventListener('click', () => {
+            checkoutModal.style.display = 'none';
+        });
+
+        checkoutForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            // Payment is handled by PayPal, not a regular form submission
+        });
+
+        cartToggleButton.addEventListener('click', () => {
+            cartContainer.style.display = cartContainer.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Modal "Add to Cart" button
+        modalAddToCartBtn.addEventListener('click', function() {
+            if (currentModalProductId) {
+                addToCart(currentModalProductId);
+                closeProductModal();
+            }
+        });
+
+        closeProductModalBtn.addEventListener('click', closeProductModal);
+
+        productModal.addEventListener('mousedown', function(e) {
+            if (e.target === productModal) {
+                closeProductModal();
+            }
+        });
+
+        window.addEventListener('keydown', function(e) {
+            if (productModal.style.display === 'flex' && e.key === 'Escape') {
+                closeProductModal();
+            }
+        });
+
+        // ===========================================
+        // אתחול האפליקציה
+        // ===========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchProducts(); // Fetch products using Netlify Function
+            updateCartDisplay(); // Render cart based on any existing data
+        });
+    </script>
+</body>
+</html>
