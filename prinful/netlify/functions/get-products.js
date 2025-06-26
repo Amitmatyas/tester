@@ -16,7 +16,7 @@ exports.handler = async function(event, context) {
         const response = await fetch(printfulApiUrl, {
             method: 'GET',
             headers: {
-                'Authorization': `Basic ${btoa(PRINTFUL_API_KEY + ':')}`, // Base64 encoding
+                'Authorization': `Bearer ${PRINTFUL_API_KEY}`, // זה השינוי הנדרש!
                 'Content-Type': 'application/json'
             }
         });
