@@ -26,7 +26,7 @@ exports.handler = async function(event, context) {
         const response = await fetch(printfulOrderApiUrl, {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${btoa(PRINTFUL_API_KEY + ':')}`,
+                'Authorization': `Bearer ${PRINTFUL_API_KEY}`, // זה השינוי הנדרש!
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(orderPayload)
