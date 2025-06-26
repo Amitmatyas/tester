@@ -751,7 +751,7 @@
                             const printfulOrderItems = cart.map(item => ({
                                 variant_id: item.printful_variant_id,
                                 quantity: item.quantity,
-                                // files: [{ type: 'MOCKUP', url: item.image }] // הוסף אם יש קבצי עיצוב לשלוח
+                                // files: [{ type: 'MOCKUP', url: item.image }] // הוסף אם יש קבצי עיצוב לשלוח, בהתאם לדרישות Printful
                             }));
 
                             const orderPayload = {
